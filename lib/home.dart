@@ -9,31 +9,37 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.purple.withOpacity(0.5),
-      body: Center(
-        child: Container(
-          decoration: const BoxDecoration(
-            border: Border.symmetric(
-              vertical: BorderSide(
-                color: Colors.white,
-                width: 2.0,
+      body: Center(       
+        // child: Transform(
+        //   transform: Matrix4.identity()
+        //     ..setEntry(3, 2, 0.001)
+        //     ..rotateX(-45),
+        //   alignment: FractionalOffset.center,
+          child: Container(
+            decoration: const BoxDecoration(
+              border: Border.symmetric(
+                vertical: BorderSide(
+                  color: Colors.white,
+                  width: 2.0,
+                )
               )
-            )
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GuitarRow(times: [1, 2, 3], color: Colors.green),
+                divider(),
+                GuitarRow(times: [4, 5, 6], color: Colors.red),
+                divider(),
+                GuitarRow(times: [10, 11, 12], color: Colors.yellow),
+                divider(),
+                GuitarRow(times: [], color: Colors.lightBlue),
+                divider(),
+                GuitarRow(times: [13], color: Colors.orange),
+              ]
+            ),
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const GuitarRow(color: Colors.green),
-              divider(),
-              const GuitarRow(color: Colors.red),
-              divider(),
-              const GuitarRow(color: Colors.yellow),
-              divider(),
-              const GuitarRow(color: Colors.lightBlue),
-              divider(),
-              const GuitarRow(color: Colors.orange),
-            ]
-          ),
-        ),
+        // ),
       ),
     );
   }
