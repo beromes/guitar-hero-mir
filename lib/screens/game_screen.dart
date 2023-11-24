@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,6 +26,7 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
 
   AudioPlayer player = AudioPlayer();
+  StreamController<RawKeyEvent> keyboardController = StreamController<RawKeyEvent>.broadcast();
 
   @override
   Widget build(BuildContext context) {        
@@ -37,7 +40,11 @@ class _GameScreenState extends State<GameScreen> {
         ),
       ),
       backgroundColor: Colors.purple.withOpacity(0.5),
-      body: Center(       
+      body: RawKeyboardListener(
+        autofocus: true,
+        focusNode: FocusNode(),
+        onKey: handleKey,
+        child: Center(
         // child: Transform(
         //   transform: Matrix4.identity()
         //     ..setEntry(3, 2, 0.001)
@@ -55,19 +62,19 @@ class _GameScreenState extends State<GameScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                GuitarRow(times: getNoteTimes(0), color: Colors.green, keyboardKey: LogicalKeyboardKey.keyA),
+                GuitarRow(times: getNoteTimes(0), color: Colors.green, keyboardKey: LogicalKeyboardKey.keyA, keyboardStream: keyboardController.stream),
                 GameScreen.divider(),
-                GuitarRow(times: getNoteTimes(1), color: Colors.red, keyboardKey: LogicalKeyboardKey.keyS),
+                GuitarRow(times: getNoteTimes(1), color: Colors.red, keyboardKey: LogicalKeyboardKey.keyS, keyboardStream: keyboardController.stream),
                 GameScreen.divider(),
-                GuitarRow(times: getNoteTimes(2), color: Colors.yellow, keyboardKey: LogicalKeyboardKey.keyJ),
+                GuitarRow(times: getNoteTimes(2), color: Colors.yellow, keyboardKey: LogicalKeyboardKey.keyJ, keyboardStream: keyboardController.stream),
                 GameScreen.divider(),
-                GuitarRow(times: getNoteTimes(3), color: Colors.lightBlue, keyboardKey: LogicalKeyboardKey.keyK),
+                GuitarRow(times: getNoteTimes(3), color: Colors.lightBlue, keyboardKey: LogicalKeyboardKey.keyK, keyboardStream: keyboardController.stream),
                 GameScreen.divider(),
-                GuitarRow(times: getNoteTimes(4), color: Colors.orange, keyboardKey: LogicalKeyboardKey.keyL),
+                GuitarRow(times: getNoteTimes(4), color: Colors.orange, keyboardKey: LogicalKeyboardKey.keyL, keyboardStream: keyboardController.stream),
               ]
             ),
           ),
-        // ),
+        ),
       ),
     );
   }
@@ -84,10 +91,26 @@ class _GameScreenState extends State<GameScreen> {
   void dispose() {
     super.dispose();
     player.dispose();
+    keyboardController.close();
   }
 
   List<double> getNoteTimes(int tier) => widget.notes
     .where((n) => n.tier == tier)
     .map((n) => n.time)
     .toList();
+
+  void handleKey(RawKeyEvent event) {
+    if (event.isKeyPressed(LogicalKeyboardKey.space)) {      
+      pausePlayer();
+    }
+    keyboardController.add(event);
+  }
+
+  void pausePlayer() {
+    if (player.state == PlayerState.playing) {
+      player.pause();
+    } else if (player.state == PlayerState.paused) {
+      player.resume();
+    }
+  }
 }

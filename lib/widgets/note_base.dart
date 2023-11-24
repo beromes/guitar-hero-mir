@@ -5,8 +5,9 @@ class NoteBase extends StatefulWidget {
   final Color color;
   final double size;
   final LogicalKeyboardKey keyboardKey;
+  final Stream<RawKeyEvent> keyboardStream;
 
-  const NoteBase({Key? key, required this.color, required this.size, required this.keyboardKey}) : super(key: key);
+  const NoteBase({Key? key, required this.color, required this.size, required this.keyboardKey, required this.keyboardStream}) : super(key: key);
 
   @override
   State<NoteBase> createState() => _NoteBaseState();
@@ -17,18 +18,19 @@ class _NoteBaseState extends State<NoteBase> {
   bool pressed = false;
 
   @override
+  void initState() {
+    super.initState();
+    widget.keyboardStream.listen((event) {       
+      if (event.logicalKey == widget.keyboardKey) {
+        setState(() {
+          pressed = !pressed;
+        });
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-
-    if (pressed) {
-      setState(() {
-        pressed = false;
-      });
-    }
-
-    // return RawKeyboardListener(
-    //   autofocus: true,
-    //   focusNode: FocusNode(),
-    //  child: Container(
     return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(widget.size)),
@@ -48,14 +50,5 @@ class _NoteBaseState extends State<NoteBase> {
           ),
         )
       );
-      // onKey: (event) {
-      //   if (event.isKeyPressed(widget.keyboardKey)) {
-      //     print('pressed');
-      //     setState(() {
-      //       pressed = true;
-      //     });
-      //   }
-      // },
-    // );
   }
 }

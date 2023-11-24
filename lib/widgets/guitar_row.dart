@@ -10,10 +10,11 @@ class GuitarRow extends StatefulWidget {
   final Color color;
   final double size;
   final LogicalKeyboardKey keyboardKey;
+  final Stream<RawKeyEvent> keyboardStream;
   late final double endTime;
   late final List<double> notesPositions;
 
-  GuitarRow({Key? key, required List<double> times, required this.color, required this.keyboardKey, this.size = 80.0}) : super(key: key) {
+  GuitarRow({Key? key, required List<double> times, required this.color, required this.keyboardKey, required this.keyboardStream, this.size = 80.0}) : super(key: key) {
     endTime = times.isEmpty ? 0 : times.reduce(max);
     notesPositions = getNotesPositions(times);
   }
@@ -35,6 +36,21 @@ class _GuitarRowState extends State<GuitarRow> {
   @override
   void initState() {
     super.initState();
+    initTimer();
+    widget.keyboardStream.listen((event) { 
+      if (event.isKeyPressed(LogicalKeyboardKey.space)) {
+        pause();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer.cancel();
+  }
+
+  void initTimer() {
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (time >= widget.endTime) timer.cancel();
       setState(() {
@@ -43,10 +59,12 @@ class _GuitarRowState extends State<GuitarRow> {
     });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    timer.cancel();
+  void pause() {
+    if (timer.isActive) {
+      timer.cancel();
+    } else {
+      initTimer();
+    }
   }
 
   @override
@@ -63,7 +81,8 @@ class _GuitarRowState extends State<GuitarRow> {
             child: NoteBase(
               color: widget.color,
               keyboardKey: widget.keyboardKey,
-              size: widget.size
+              keyboardStream: widget.keyboardStream,
+              size: widget.size,
             ),
           ),
           ...widget.notesPositions.map(
