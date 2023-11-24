@@ -29,21 +29,28 @@ class GuitarRow extends StatefulWidget {
 
 class _GuitarRowState extends State<GuitarRow> {
 
-  Timer? timer;
+  late Timer timer;
   int time = -10;
 
   @override
-  Widget build(BuildContext context) {
-    timer ??= Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (time >= widget.endTime) {
-        timer.cancel();
-      }
-
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (time >= widget.endTime) timer.cancel();
       setState(() {
         time += 1;
       });
     });
+  }
 
+  @override
+  void dispose() {
+    super.dispose();
+    timer.cancel();
+  }
+
+  @override
+  Widget build(BuildContext context) {    
     return Container(
       color: Colors.black.withOpacity(0.5),
       width: widget.size,

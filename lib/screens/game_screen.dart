@@ -26,8 +26,16 @@ class _GameScreenState extends State<GameScreen> {
   AudioPlayer player = AudioPlayer();
 
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {        
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        title: Text('${widget.music.name} - ${widget.music.author}'),
+        leading: IconButton(
+          icon: const Icon(Icons.navigate_before),
+          onPressed: () => Navigator.of(context).pop()
+        ),
+      ),
       backgroundColor: Colors.purple.withOpacity(0.5),
       body: Center(       
         // child: Transform(

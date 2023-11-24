@@ -14,6 +14,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           children: [
             title(),
+            const SizedBox(height: 12),
             Expanded(child: musics()),
           ],
         ),
@@ -25,8 +26,9 @@ class HomeScreen extends StatelessWidget {
   Widget title() {
     return const Column(
       children: [
-        Text("GUITAR MIR'O"),
-        Text('Selecione uma música')
+        Text('Guitar MIRo', style: TextStyle(fontSize: 32)),
+        SizedBox(height: 64),
+        Text('Selecione uma música', style: TextStyle(fontSize: 18))
       ],
     );
   }
@@ -36,12 +38,14 @@ class HomeScreen extends StatelessWidget {
       itemBuilder: (ctx, i) {
         Music music = Music.values[i];
         return ListTile(
+          tileColor: Colors.purple.withOpacity(0.2),
           title: Text(music.name),
           subtitle: Text('${music.author} - ${music.releaseYear}'),
           trailing: IconButton(
             icon: const Icon(Icons.play_arrow),
             onPressed: () => selectMusic(music, ctx),
           ),
+          onTap: () => selectMusic(music, ctx),
         );
       },  
       separatorBuilder: (ctx, i) => const SizedBox(height: 12), 
